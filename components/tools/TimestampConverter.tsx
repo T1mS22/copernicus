@@ -25,6 +25,9 @@ function useNowSeconds(): number | null {
   );
 }
 
+// What <input type="datetime-local"> accepts: no time zone suffix.
+const LOCAL_INPUT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?$/;
+
 const timeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function DateDetails({ date }: { date: Date }) {
@@ -110,7 +113,7 @@ export default function TimestampConverter() {
           <input
             type="datetime-local"
             step={1}
-            value={/^\d{4}-\d{2}-\d{2}T/.test(dateInput) ? dateInput : ""}
+            value={LOCAL_INPUT.test(dateInput) ? dateInput : ""}
             onChange={(event) => setDateInput(event.target.value)}
             aria-label="Date and time (local)"
             className="input flex-1"

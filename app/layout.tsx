@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, Poppins } from "next/font/google";
 import Link from "next/link";
 import { connection } from "next/server";
+import Analytics from "@/components/Analytics";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -56,6 +57,7 @@ export default async function RootLayout({
           These tools run entirely in your browser. Nothing you enter is sent to
           a server.
         </footer>
+        <Analytics />
       </body>
     </html>
   );

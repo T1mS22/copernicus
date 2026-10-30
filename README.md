@@ -4,10 +4,16 @@ Everyday developer tools at [tools.t-s.dev](https://tools.t-s.dev). Named
 after Copernicus (55 Cancri A), a star with five known planets: the hub the
 other tools orbit.
 
-Every tool runs entirely in the browser. There's no backend, no database and
-no analytics, and the Content Security Policy (`connect-src 'self'`) stops
-pages from sending anything to another origin, so pasted tokens, IBANs and
-passwords never leave the machine.
+Every tool runs entirely in the browser. There's no backend or database, and
+the Content Security Policy (`connect-src 'self'`) stops pages from sending
+anything to another origin, so pasted tokens, IBANs and passwords never leave
+the machine.
+
+Vercel Web Analytics counts page views ([`components/Analytics.tsx`](components/Analytics.tsx)).
+It's served from the same origin, sets no cookies and only sees the path:
+query strings and fragments are stripped before anything is sent. Nothing
+typed into a tool is part of a page view. Lete (the one-time secret app)
+deliberately has no analytics, because its links carry the decryption key.
 
 ## Tools
 
@@ -58,6 +64,6 @@ yarn build
 ## Deployment
 
 1. Import the repo as a new Vercel project. No environment variables are
-   needed.
+   needed. Enable **Analytics** in the project so `/_vercel/insights` exists.
 2. Add the domain `tools.t-s.dev` in Vercel, then in Cloudflare DNS add a
    `CNAME tools → cname.vercel-dns.com` with the proxy **off** (DNS only).
