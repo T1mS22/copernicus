@@ -3,7 +3,7 @@
 import { CircleCheck, CircleX } from "lucide-react";
 import { useState } from "react";
 import { CopyButton, OutputRow, Panel } from "@/components/ui";
-import { checkIban } from "@/lib/iban";
+import { buildGermanIban, checkIban, formatIban } from "@/lib/iban";
 
 const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
 
@@ -13,6 +13,63 @@ function countryName(code: string): string {
   } catch {
     return code;
   }
+}
+
+function build(bankCode: string, account: string) {
+  if (!bankCode.trim() || !account.trim()) return { iban: null, error: null };
+  try {
+    return { iban: buildGermanIban(bankCode, account), error: null };
+  } catch (error) {
+    return { iban: null, error: (error as Error).message };
+  }
+}
+
+// Old-style German bank details (BLZ + Kontonummer) to an IBAN.
+function GermanIbanBuilder() {
+  const [bankCode, setBankCode] = useState("");
+  const [account, setAccount] = useState("");
+  const { iban, error } = build(bankCode, account);
+
+  return (
+    <Panel title="Build a German IBAN">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="flex flex-col gap-1.5 text-sm">
+          <span className="text-muted">Bank code (BLZ)</span>
+          <input
+            value={bankCode}
+            onChange={(event) => setBankCode(event.target.value)}
+            placeholder="37040044"
+            inputMode="numeric"
+            autoComplete="off"
+            className="input w-full font-mono"
+          />
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm">
+          <span className="text-muted">Account number</span>
+          <input
+            value={account}
+            onChange={(event) => setAccount(event.target.value)}
+            placeholder="532013000"
+            inputMode="numeric"
+            autoComplete="off"
+            className="input w-full font-mono"
+          />
+        </label>
+      </div>
+      {error && <p className="mt-3 text-sm text-error">{error}</p>}
+      {iban && (
+        <div className="mt-3">
+          <OutputRow label="IBAN" value={formatIban(iban)} />
+          <OutputRow label="Without spaces" value={iban} />
+        </div>
+      )}
+      <p className="mt-3 text-xs text-faint">
+        Uses the standard calculation. A few banks convert some old account
+        numbers differently, so the IBAN on the bank&apos;s own statements
+        always takes precedence.
+      </p>
+    </Panel>
+  );
 }
 
 export default function IbanValidator() {
@@ -75,6 +132,8 @@ export default function IbanValidator() {
           )}
         </Panel>
       )}
+
+      <GermanIbanBuilder />
 
       <p className="text-xs text-faint">
         This checks the format and the check digits, which catches almost all

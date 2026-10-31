@@ -133,3 +133,21 @@ export function checkIban(input: string): IbanCheck {
   result.valid = result.errors.length === 0;
   return result;
 }
+
+// German IBAN from bank code (BLZ) and account number using the standard
+// method. A few banks apply their own conversion rules (e.g. for old account
+// numbers), so the bank's official IBAN always wins.
+export function buildGermanIban(
+  bankCode: string,
+  accountNumber: string,
+): string {
+  const blz = bankCode.replace(/\s+/g, "");
+  const account = accountNumber.replace(/\s+/g, "");
+  if (!/^\d{8}$/.test(blz))
+    throw new Error("A German bank code (BLZ) has 8 digits.");
+  if (!/^\d{1,10}$/.test(account))
+    throw new Error("A German account number has up to 10 digits.");
+  const bban = blz + account.padStart(10, "0");
+  const check = 98 - ibanChecksum(`DE00${bban}`);
+  return `DE${String(check).padStart(2, "0")}${bban}`;
+}

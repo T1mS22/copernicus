@@ -15,6 +15,15 @@ import {
   parseIsoDate,
   todayIso,
 } from "@/lib/datecalc";
+import {
+  type Holiday,
+  type HolidayRegion,
+  holidays,
+  holidaysBetween,
+  STATES,
+} from "@/lib/holidays";
+
+const REGION_KEY = "date-calculator:region";
 
 const number = (value: number) => value.toLocaleString("en-US");
 const plural = (value: number, unit: string) =>
@@ -30,6 +39,53 @@ function longDate(date: Date): string {
   });
 }
 
+function shortDate(date: Date): string {
+  return date.toLocaleDateString("en-GB", {
+    timeZone: "UTC",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+}
+
+const isWeekday = (date: Date) =>
+  date.getUTCDay() !== 0 && date.getUTCDay() !== 6;
+
+// The chosen state is remembered in this browser only.
+function savedRegion(): HolidayRegion | "none" {
+  try {
+    return (
+      (localStorage.getItem(REGION_KEY) as HolidayRegion | "none" | null) ??
+      "DE"
+    );
+  } catch {
+    return "DE";
+  }
+}
+
+function HolidayList({ items }: { items: Holiday[] }) {
+  return (
+    <ul className="divide-y divide-line text-sm">
+      {items.map((holiday) => (
+        <li
+          key={holiday.date.getTime()}
+          className="flex justify-between gap-4 py-1.5"
+        >
+          <span>
+            {holiday.german}{" "}
+            <span className="text-faint">· {holiday.name}</span>
+          </span>
+          <span
+            className={`whitespace-nowrap font-mono ${isWeekday(holiday.date) ? "" : "text-faint"}`}
+          >
+            {shortDate(holiday.date)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function DateCalculator() {
   const today = todayIso();
   const [start, setStart] = useState(today);
@@ -39,11 +95,27 @@ export default function DateCalculator() {
   const [amount, setAmount] = useState("14");
   const [unit, setUnit] = useState<DateUnit>("days");
   const [operation, setOperation] = useState<"add" | "subtract">("add");
+  const [region, setRegion] = useState<HolidayRegion | "none">(savedRegion);
+
+  function changeRegion(value: HolidayRegion | "none") {
+    setRegion(value);
+    try {
+      localStorage.setItem(REGION_KEY, value);
+    } catch {
+      // Private mode or blocked storage: the choice just isn't remembered.
+    }
+  }
 
   const from = parseIsoDate(start);
   const to = parseIsoDate(end);
   const total = from && to ? daysBetween(from, to) : null;
   const parts = from && to ? calendarDifference(from, to) : null;
+  const inRange =
+    from && to && region !== "none" ? holidaysBetween(from, to, region) : [];
+  const weekdayHolidays = inRange.filter((holiday) =>
+    isWeekday(holiday.date),
+  ).length;
+  const working = from && to ? businessDays(from, to) : 0;
 
   const amountValue = Number(amount);
   const shifted =
@@ -52,9 +124,32 @@ export default function DateCalculator() {
       : null;
 
   const week = from ? isoWeek(from) : null;
+  const regionLabel =
+    region === "DE"
+      ? "Germany (nationwide)"
+      : (STATES.find((state) => state.code === region)?.name ?? "");
 
   return (
     <div className="space-y-5">
+      <label className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="text-muted">Public holidays</span>
+        <select
+          value={region}
+          onChange={(event) =>
+            changeRegion(event.target.value as HolidayRegion | "none")
+          }
+          className="select select-sm w-64"
+        >
+          <option value="none">Don&apos;t include holidays</option>
+          <option value="DE">Germany (nationwide only)</option>
+          {STATES.map((state) => (
+            <option key={state.code} value={state.code}>
+              {state.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <Panel title="Between two dates">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1.5 text-sm">
@@ -89,16 +184,28 @@ export default function DateCalculator() {
               value={`${plural(parts.years, "year")}, ${plural(parts.months, "month")}, ${plural(parts.days, "day")}`}
               mono={false}
             />
-            <OutputRow
-              label="Working days (Mon–Fri)"
-              value={number(businessDays(from, to))}
-            />
+            <OutputRow label="Weekdays (Mon–Fri)" value={number(working)} />
+            {region !== "none" && (
+              <OutputRow
+                label="Working days"
+                value={`${number(working - Math.sign(working || 1) * weekdayHolidays)} (minus ${plural(weekdayHolidays, "holiday")} on weekdays)`}
+                mono={false}
+              />
+            )}
             <OutputRow label="Hours" value={number(total * 24)} />
           </div>
         )}
+        {inRange.length > 0 && (
+          <div className="mt-4">
+            <p className="mb-1 text-xs text-faint">
+              Holidays in this period ({regionLabel})
+            </p>
+            <HolidayList items={inRange} />
+          </div>
+        )}
         <p className="mt-3 text-xs text-faint">
-          The end date isn&apos;t counted (1 to 2 March is one day). Working
-          days ignore public holidays.
+          The end date isn&apos;t counted (1 to 2 March is one day). Holidays
+          are statewide ones only; some regions have extra local holidays.
         </p>
       </Panel>
 
@@ -160,6 +267,17 @@ export default function DateCalculator() {
             value={isLeapYear(from.getUTCFullYear()) ? "Yes" : "No"}
             mono={false}
           />
+        </Panel>
+      )}
+
+      {from && region !== "none" && (
+        <Panel
+          title={`Public holidays ${from.getUTCFullYear()} · ${regionLabel}`}
+        >
+          <HolidayList items={holidays(from.getUTCFullYear(), region)} />
+          <p className="mt-2 text-xs text-faint">
+            Dates in grey fall on a weekend.
+          </p>
         </Panel>
       )}
     </div>

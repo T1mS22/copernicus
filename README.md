@@ -17,48 +17,60 @@ deliberately has no analytics, because its links carry the decryption key.
 
 ## Tools
 
-| Tool                        | Path                                              | Logic                              |
-| --------------------------- | ------------------------------------------------- | ---------------------------------- |
-| Password generator          | `/password-generator`                             | `lib/password.ts`                  |
-| Hash generator              | `/hash-generator`                                 | `lib/hash.ts`                      |
-| HMAC generator              | `/hmac-generator`                                 | `lib/hmac.ts`                      |
-| JWT decoder                 | `/jwt-decoder`                                    | `lib/jwt.ts`                       |
-| Text diff                   | `/text-diff`                                      | `lib/diff.ts`                      |
-| Regex tester                | `/regex-tester`                                   | `lib/regex.ts`                     |
-| Case converter              | `/case-converter`                                 | `lib/case.ts`                      |
-| Word and character counter  | `/text-counter`                                   | `lib/textstats.ts`                 |
-| JSON formatter              | `/json-formatter`                                 | `lib/json.ts`                      |
-| JSON / YAML / CSV converter | `/data-converter`                                 | `lib/dataconvert.ts`, `lib/csv.ts` |
-| XML formatter               | `/xml-formatter`                                  | `lib/xml.ts`                       |
-| Base64 encode / decode      | `/base64`                                         | `lib/base64.ts`                    |
-| URL encode / decode         | `/url-encoder`                                    | `lib/url.ts`                       |
-| Number base converter       | `/number-base-converter`                          | `lib/numberbase.ts`                |
-| UUID / GUID generator       | `/uuid-generator`                                 | `lib/uuid.ts`                      |
-| ULID generator              | `/ulid-generator`                                 | `lib/ulid.ts`                      |
-| QR code generator           | `/qr-code-generator`                              | `lib/qr.ts`                        |
-| Unix timestamp converter    | `/timestamp-converter`                            | `lib/timestamp.ts`                 |
-| Cron expression explainer   | `/cron-explainer`                                 | `lib/cron.ts`                      |
-| Time zone converter         | `/timezone-converter`                             | `lib/timezone.ts`                  |
-| Date calculator             | `/date-calculator`                                | `lib/datecalc.ts`                  |
-| IPv4 subnet calculator      | `/subnet-calculator`                              | `lib/subnet.ts`                    |
-| IPv6 subnet calculator      | `/ipv6-subnet-calculator`                         | `lib/ipv6.ts`                      |
-| IP range checker            | `/ip-range-checker`                               | `lib/iprange.ts`                   |
-| MAC address formatter       | `/mac-address-formatter`                          | `lib/mac.ts`                       |
-| chmod calculator            | `/chmod-calculator`                               | `lib/chmod.ts`                     |
-| Color converter             | `/color-converter`                                | `lib/color.ts`                     |
-| HTTP status codes           | `/http-status-codes`                              | `lib/httpstatus.ts`                |
-| User agent parser           | `/user-agent-parser`                              | `lib/useragent.ts`                 |
-| IBAN validator              | `/iban-validator`                                 | `lib/iban.ts`                      |
-| BIC / SWIFT validator       | `/bic-validator`                                  | `lib/validators.ts`                |
-| VAT ID validator            | `/vat-id-validator`                               | `lib/validators.ts`                |
-| EAN / GTIN validator        | `/ean-validator`                                  | `lib/validators.ts`                |
-| Unit converter              | `/unit-converter`                                 | `lib/units.ts`                     |
-| One-time secret sharing     | links to [secret.t-s.dev](https://secret.t-s.dev) | own repo (`lete`)                  |
+| Tool                        | Path                                              | Logic                                |
+| --------------------------- | ------------------------------------------------- | ------------------------------------ |
+| Password generator          | `/password-generator`                             | `lib/password.ts`                    |
+| Hash generator              | `/hash-generator`                                 | `lib/hash.ts`                        |
+| HMAC generator              | `/hmac-generator`                                 | `lib/hmac.ts`                        |
+| Certificate decoder         | `/certificate-decoder`                            | `lib/certificate.ts`, `lib/asn1.ts`  |
+| SSH key fingerprint         | `/ssh-key-fingerprint`                            | `lib/ssh.ts`, `lib/md5.ts`           |
+| JWT decoder                 | `/jwt-decoder`                                    | `lib/jwt.ts`                         |
+| Text diff                   | `/text-diff`                                      | `lib/diff.ts`                        |
+| Regex tester                | `/regex-tester`                                   | `lib/regex.ts`                       |
+| Case converter              | `/case-converter`                                 | `lib/case.ts`                        |
+| Word and character counter  | `/text-counter`                                   | `lib/textstats.ts`                   |
+| Unicode inspector           | `/unicode-inspector`                              | `lib/unicode.ts`                     |
+| JSON formatter              | `/json-formatter`                                 | `lib/json.ts`                        |
+| JSON / YAML / CSV converter | `/data-converter`                                 | `lib/dataconvert.ts`, `lib/csv.ts`   |
+| XML formatter               | `/xml-formatter`                                  | `lib/xml.ts`                         |
+| Connection string parser    | `/connection-string-parser`                       | `lib/connectionstring.ts`            |
+| Base64 encode / decode      | `/base64`                                         | `lib/base64.ts`                      |
+| URL encode / decode         | `/url-encoder`                                    | `lib/url.ts`                         |
+| Number base converter       | `/number-base-converter`                          | `lib/numberbase.ts`                  |
+| UUID / GUID generator       | `/uuid-generator`                                 | `lib/uuid.ts`                        |
+| ULID generator              | `/ulid-generator`                                 | `lib/ulid.ts`                        |
+| QR code generator           | `/qr-code-generator`                              | `lib/qr.ts`                          |
+| Unix timestamp converter    | `/timestamp-converter`                            | `lib/timestamp.ts`                   |
+| Duration converter          | `/duration-converter`                             | `lib/duration.ts`                    |
+| Cron expression explainer   | `/cron-explainer`                                 | `lib/cron.ts`                        |
+| Time zone converter         | `/timezone-converter`                             | `lib/timezone.ts`                    |
+| Date calculator             | `/date-calculator`                                | `lib/datecalc.ts`, `lib/holidays.ts` |
+| IPv4 subnet calculator      | `/subnet-calculator`                              | `lib/subnet.ts`                      |
+| IPv6 subnet calculator      | `/ipv6-subnet-calculator`                         | `lib/ipv6.ts`                        |
+| IP range checker            | `/ip-range-checker`                               | `lib/iprange.ts`                     |
+| MAC address formatter       | `/mac-address-formatter`                          | `lib/mac.ts`                         |
+| Transfer time calculator    | `/transfer-time-calculator`                       | `lib/transfer.ts`                    |
+| Port reference              | `/port-reference`                                 | `lib/ports.ts`                       |
+| chmod calculator            | `/chmod-calculator`                               | `lib/chmod.ts`                       |
+| Color converter             | `/color-converter`                                | `lib/color.ts`                       |
+| Image converter             | `/image-converter`                                | `lib/exif.ts`                        |
+| Metronome                   | `/metronome`                                      | `lib/metronome.ts`                   |
+| HTTP status codes           | `/http-status-codes`                              | `lib/httpstatus.ts`                  |
+| User agent parser           | `/user-agent-parser`                              | `lib/useragent.ts`                   |
+| IBAN validator              | `/iban-validator`                                 | `lib/iban.ts`                        |
+| BIC / SWIFT validator       | `/bic-validator`                                  | `lib/validators.ts`                  |
+| VAT ID validator            | `/vat-id-validator`                               | `lib/validators.ts`                  |
+| EAN / GTIN validator        | `/ean-validator`                                  | `lib/validators.ts`                  |
+| Unit converter              | `/unit-converter`                                 | `lib/units.ts`                       |
+| One-time secret sharing     | links to [secret.t-s.dev](https://secret.t-s.dev) | own repo (`lete`)                    |
 
 Randomness always comes from `crypto.getRandomValues` (`lib/random.ts`, with
 rejection sampling to avoid bias). Passphrases use the EFF large wordlist.
 Third-party libraries: `yaml` (YAML parsing), `cronstrue` (cron descriptions)
 and `uqr` (QR encoding); everything else is plain TypeScript in `lib/`.
+
+The image converter shows previews from local `blob:` URLs, so the CSP allows
+`img-src blob:`; nothing is uploaded.
 
 Tools whose first render depends on the clock, randomness or inline styles
 (swatches) are wrapped in `ClientOnly`, so server and browser renders match
