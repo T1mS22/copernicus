@@ -359,10 +359,19 @@ export const TOOLS: Tool[] = [
     slug: "subnet-calculator",
     name: "IPv4 subnet calculator",
     description:
-      "Network ranges for a CIDR block, split into equal subnets or by host count.",
+      "Network ranges for a CIDR block, split by size or host count, with an Azure VNet mode.",
     category: "Network",
     icon: Network,
-    keywords: ["cidr", "ip", "netmask", "vlsm", "segmentation", "split"],
+    keywords: [
+      "cidr",
+      "ip",
+      "netmask",
+      "vlsm",
+      "segmentation",
+      "split",
+      "azure",
+      "vnet",
+    ],
   },
   {
     slug: "ipv6-subnet-calculator",

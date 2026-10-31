@@ -131,12 +131,62 @@ export function describeSubnet(address: number, prefix: number): Subnet {
   };
 }
 
+// Azure reserves five addresses in every subnet: the network address, .1 for
+// the default gateway, .2 and .3 for Azure DNS, and the broadcast address.
+// The smallest subnet Azure accepts is a /29.
+export const AZURE_RESERVED = 5;
+export const AZURE_MIN_PREFIX = 29;
+
+export function azureSubnet(subnet: Subnet): Subnet {
+  const supported = subnet.prefix <= AZURE_MIN_PREFIX;
+  return {
+    ...subnet,
+    firstHost: subnet.network + 4,
+    lastHost: subnet.broadcast - 1,
+    hosts: supported ? subnet.size - AZURE_RESERVED : 0,
+  };
+}
+
+// Subnets Azure services need under a fixed name, with their minimum size.
+export const AZURE_SPECIAL_SUBNETS: {
+  name: string;
+  prefix: number;
+  note: string;
+}[] = [
+  {
+    name: "GatewaySubnet",
+    prefix: 27,
+    note: "VPN and ExpressRoute gateways. /29 works, but /27 or larger is recommended.",
+  },
+  {
+    name: "AzureBastionSubnet",
+    prefix: 26,
+    note: "Azure Bastion needs /26 or larger.",
+  },
+  {
+    name: "AzureFirewallSubnet",
+    prefix: 26,
+    note: "Azure Firewall needs a /26.",
+  },
+  {
+    name: "AzureFirewallManagementSubnet",
+    prefix: 26,
+    note: "Forced tunnelling and Basic SKU firewalls need it, also a /26.",
+  },
+  {
+    name: "RouteServerSubnet",
+    prefix: 26,
+    note: "Azure Route Server needs /26 or larger.",
+  },
+];
+
 export const MAX_LISTED_SUBNETS = 1024;
 
 export function splitByPrefix(
   network: number,
   prefix: number,
   newPrefix: number,
+  azure = false,
 ): { subnets: Subnet[]; total: number } {
   if (newPrefix < prefix || newPrefix > 32) {
     throw new RangeError(`The new prefix must be between /${prefix} and /32.`);
@@ -145,7 +195,10 @@ export function splitByPrefix(
   const size = blockSize(newPrefix);
   const subnets = Array.from(
     { length: Math.min(total, MAX_LISTED_SUBNETS) },
-    (_, i) => describeSubnet(network + i * size, newPrefix),
+    (_, i) => {
+      const subnet = describeSubnet(network + i * size, newPrefix);
+      return azure ? azureSubnet(subnet) : subnet;
+    },
   );
   return { subnets, total };
 }
@@ -159,6 +212,15 @@ export function prefixForHosts(hosts: number): number {
   return 32 - Math.max(2, Math.ceil(Math.log2(hosts + 2)));
 }
 
+// Smallest Azure subnet (/29 or larger) with room for `hosts` after the five
+// reserved addresses.
+export function prefixForHostsAzure(hosts: number): number {
+  return Math.min(
+    AZURE_MIN_PREFIX,
+    32 - Math.ceil(Math.log2(hosts + AZURE_RESERVED)),
+  );
+}
+
 export type HostRequest = { name: string; hosts: number };
 export type Allocation = HostRequest & { subnet: Subnet };
 
@@ -168,18 +230,22 @@ export function allocateByHosts(
   network: number,
   prefix: number,
   requests: HostRequest[],
+  azure = false,
 ): { allocations: Allocation[]; used: number; free: number } {
   const sorted = [...requests].sort((a, b) => b.hosts - a.hosts);
   const end = network + blockSize(prefix);
   let next = network;
   const allocations = sorted.map((request) => {
-    const subnetPrefix = prefixForHosts(request.hosts);
+    const subnetPrefix = azure
+      ? prefixForHostsAzure(request.hosts)
+      : prefixForHosts(request.hosts);
     if (subnetPrefix < prefix || next + blockSize(subnetPrefix) > end) {
       throw new RangeError(
         `“${request.name}” doesn't fit: the /${prefix} block runs out of space.`,
       );
     }
-    const subnet = describeSubnet(next, subnetPrefix);
+    const plain = describeSubnet(next, subnetPrefix);
+    const subnet = azure ? azureSubnet(plain) : plain;
     next += subnet.size;
     return { ...request, subnet };
   });

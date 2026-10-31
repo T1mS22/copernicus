@@ -243,3 +243,51 @@ test("number parsing and formatting", () => {
   assert.equal(formatNumber(1e20), "1e+20");
   assert.equal(formatNumber(1234567.891), "1234567.891");
 });
+
+test("Azure subnet mode reserves five addresses", async () => {
+  const { azureSubnet, prefixForHostsAzure, AZURE_SPECIAL_SUBNETS } =
+    await import("./subnet.ts");
+  const subnet = azureSubnet(describeSubnet(ip("10.0.1.0"), 24));
+  assert.equal(subnet.hosts, 251);
+  assert.equal(formatIPv4(subnet.firstHost), "10.0.1.4");
+  assert.equal(formatIPv4(subnet.lastHost), "10.0.1.254");
+  assert.equal(azureSubnet(describeSubnet(ip("10.0.1.0"), 29)).hosts, 3);
+  assert.equal(azureSubnet(describeSubnet(ip("10.0.1.0"), 30)).hosts, 0);
+
+  assert.equal(prefixForHostsAzure(1), 29);
+  assert.equal(prefixForHostsAzure(3), 29);
+  assert.equal(prefixForHostsAzure(4), 28);
+  assert.equal(prefixForHostsAzure(59), 26);
+  assert.equal(prefixForHostsAzure(60), 25);
+
+  // 120 hosts fit a normal /25 (126 usable) and also an Azure /25 (123).
+  const result = allocateByHosts(
+    ip("10.1.0.0"),
+    24,
+    [
+      { name: "App", hosts: 120 },
+      { name: "Data", hosts: 28 },
+    ],
+    true,
+  );
+  assert.deepEqual(
+    result.allocations.map((a) => [
+      a.name,
+      `${formatIPv4(a.subnet.network)}/${a.subnet.prefix}`,
+      a.subnet.hosts,
+    ]),
+    [
+      ["App", "10.1.0.0/25", 123],
+      ["Data", "10.1.0.128/26", 59],
+    ],
+  );
+  assert.ok(
+    AZURE_SPECIAL_SUBNETS.some(
+      (s) => s.name === "AzureBastionSubnet" && s.prefix === 26,
+    ),
+  );
+  assert.equal(
+    splitByPrefix(ip("10.0.0.0"), 24, 26, true).subnets[0].hosts,
+    59,
+  );
+});
