@@ -29,6 +29,7 @@ import {
   ListOrdered,
   Lock,
   type LucideIcon,
+  MapPinned,
   MonitorSmartphone,
   Network,
   Palette,
@@ -42,6 +43,7 @@ import {
   Server,
   ShieldCheck,
   SquareTerminal,
+  UserCog,
   Waypoints,
   WholeWord,
 } from "lucide-react";
@@ -54,6 +56,7 @@ export const CATEGORIES = [
   "Generators",
   "Time",
   "Network",
+  "Azure",
   "System",
   "Design",
   "Media",
@@ -425,6 +428,39 @@ export const TOOLS: Tool[] = [
     category: "Network",
     icon: Cable,
     keywords: ["tcp", "udp", "port", "firewall", "nsg", "rdp", "ssh", "sql"],
+  },
+  {
+    slug: "azure-regions",
+    name: "Azure regions",
+    description:
+      "All public Azure regions with programmatic names, paired regions and availability zones.",
+    category: "Azure",
+    icon: MapPinned,
+    keywords: [
+      "azure",
+      "region",
+      "location",
+      "paired",
+      "availability zones",
+      "westeurope",
+    ],
+  },
+  {
+    slug: "azure-roles",
+    name: "Azure built-in roles",
+    description:
+      "Search the 505 built-in RBAC roles by name, description or role ID.",
+    category: "Azure",
+    icon: UserCog,
+    keywords: [
+      "azure",
+      "rbac",
+      "role",
+      "iam",
+      "role definition",
+      "guid",
+      "permissions",
+    ],
   },
   {
     slug: "chmod-calculator",

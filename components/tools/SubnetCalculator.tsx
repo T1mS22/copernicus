@@ -2,6 +2,7 @@
 
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
+import DocsLink from "@/components/DocsLink";
 import {
   CopyButton,
   ErrorMessage,
@@ -25,6 +26,15 @@ import {
   type Subnet,
   usableHosts,
 } from "@/lib/subnet";
+import { MICROSOFT_DOCS } from "@/lib/azurereference";
+
+const SPECIAL_SUBNET_DOCS: Record<string, string> = {
+  GatewaySubnet: MICROSOFT_DOCS.gatewaySubnet,
+  AzureBastionSubnet: MICROSOFT_DOCS.bastionSubnet,
+  AzureFirewallSubnet: MICROSOFT_DOCS.firewallSubnet,
+  AzureFirewallManagementSubnet: MICROSOFT_DOCS.firewallSubnet,
+  RouteServerSubnet: MICROSOFT_DOCS.routeServerSubnet,
+};
 
 type SplitMode = "equal" | "hosts";
 type Mode = "standard" | "azure";
@@ -366,6 +376,7 @@ export default function SubnetCalculator() {
                       <th>Name</th>
                       <th>Minimum</th>
                       <th>Notes</th>
+                      <th />
                     </tr>
                   </thead>
                   <tbody>
@@ -379,6 +390,11 @@ export default function SubnetCalculator() {
                           {count(2 ** (32 - special.prefix) - 5)} usable)
                         </td>
                         <td className="text-muted">{special.note}</td>
+                        <td className="whitespace-nowrap">
+                          <DocsLink href={SPECIAL_SUBNET_DOCS[special.name]}>
+                            Docs
+                          </DocsLink>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -389,6 +405,14 @@ export default function SubnetCalculator() {
                 subnet with exactly that name. Application Gateway v2 has no
                 fixed name but works best in its own /24.
               </p>
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                <DocsLink href={MICROSOFT_DOCS.vnetFaq}>
+                  Reserved addresses (VNet FAQ)
+                </DocsLink>
+                <DocsLink href={MICROSOFT_DOCS.appGatewaySubnet}>
+                  Application Gateway subnet
+                </DocsLink>
+              </div>
             </Panel>
           )}
         </>

@@ -262,3 +262,31 @@ test("HTTP status search", () => {
   assert.ok(searchStatuses("retry-after").some((s) => s.code === 503));
   assert.deepEqual(searchStatuses("zzzz"), []);
 });
+
+test("Azure reference data", async () => {
+  const { searchRoles, searchRegions, regionByName, roleDocsUrl } =
+    await import("./azurereference.ts");
+  const { AZURE_ROLES } = await import("./data/azure-roles.ts");
+  const { AZURE_REGIONS } = await import("./data/azure-regions.ts");
+  assert.equal(new Set(AZURE_ROLES.map((r) => r.id)).size, AZURE_ROLES.length);
+  assert.equal(
+    new Set(AZURE_REGIONS.map((r) => r.id)).size,
+    AZURE_REGIONS.length,
+  );
+  const owner = searchRoles("owner", "Privileged").find(
+    (r) => r.name === "Owner",
+  )!;
+  assert.equal(owner.id, "8e3af657-a8ff-443c-a75c-2fe8c4bcb635");
+  assert.equal(searchRoles("acdd72a7", null)[0].name, "Reader");
+  assert.match(roleDocsUrl(owner), /built-in-roles#owner$/);
+  assert.equal(regionByName("Germany West Central")?.paired, "Germany North");
+  assert.ok(
+    searchRegions("frankfurt", true).some((r) => r.id === "germanywestcentral"),
+  );
+  assert.ok(searchRegions("", true).every((r) => r.zones > 0));
+  // Pairs outside the public list are restricted regions (e.g. Sweden South).
+  const missing = AZURE_REGIONS.filter(
+    (r) => r.paired && !regionByName(r.paired),
+  );
+  assert.ok(missing.length < 10);
+});
