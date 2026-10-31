@@ -47,7 +47,7 @@ export function OutputRow({
     <div className="flex flex-col gap-1 border-b border-line py-2.5 last:border-b-0 sm:flex-row sm:items-center sm:gap-4">
       <span className="w-44 shrink-0 text-sm text-muted">{label}</span>
       <span
-        className={`min-w-0 flex-1 break-all ${mono ? "font-mono text-sm" : ""}`}
+        className={`min-w-0 flex-1 break-all whitespace-pre-wrap ${mono ? "font-mono text-sm" : ""}`}
       >
         {value}
       </span>
