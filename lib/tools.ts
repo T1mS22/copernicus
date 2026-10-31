@@ -1,5 +1,7 @@
 import {
   ArrowLeftRight,
+  Banknote,
+  Barcode,
   Binary,
   Braces,
   Calculator,
@@ -9,6 +11,7 @@ import {
   Clock,
   CodeXml,
   Diff,
+  EthernetPort,
   Fingerprint,
   Globe,
   Hash,
@@ -18,14 +21,19 @@ import {
   ListOrdered,
   Lock,
   type LucideIcon,
+  MonitorSmartphone,
   Network,
   Palette,
   QrCode,
+  Receipt,
   Regex,
   Ruler,
   ScanText,
+  SearchCheck,
+  Server,
   ShieldCheck,
   SquareTerminal,
+  Waypoints,
   WholeWord,
 } from "lucide-react";
 
@@ -39,7 +47,8 @@ export const CATEGORIES = [
   "Network",
   "System",
   "Design",
-  "Finance",
+  "Web",
+  "Validation",
   "Units",
 ] as const;
 
@@ -259,6 +268,41 @@ export const TOOLS: Tool[] = [
     keywords: ["cidr", "ip", "netmask", "vlsm", "segmentation", "split"],
   },
   {
+    slug: "ipv6-subnet-calculator",
+    name: "IPv6 subnet calculator",
+    description:
+      "Prefixes, ranges and address types, compressed or expanded, split into /64s.",
+    category: "Network",
+    icon: Waypoints,
+    keywords: ["ipv6", "cidr", "prefix", "/64", "ula", "link-local", "subnet"],
+  },
+  {
+    slug: "ip-range-checker",
+    name: "IP range checker",
+    description:
+      "Check whether IPs fall inside CIDR ranges or allow-lists, for IPv4 and IPv6.",
+    category: "Network",
+    icon: SearchCheck,
+    keywords: [
+      "cidr",
+      "allow-list",
+      "whitelist",
+      "nsg",
+      "firewall",
+      "contains",
+      "match",
+    ],
+  },
+  {
+    slug: "mac-address-formatter",
+    name: "MAC address formatter",
+    description:
+      "Convert MAC formats, spot randomized addresses and get the IPv6 EUI-64 ID.",
+    category: "Network",
+    icon: EthernetPort,
+    keywords: ["mac", "ethernet", "oui", "eui-64", "cisco", "random"],
+  },
+  {
     slug: "chmod-calculator",
     name: "chmod calculator",
     description: "Unix file permissions in octal and symbolic notation.",
@@ -275,12 +319,56 @@ export const TOOLS: Tool[] = [
     keywords: ["colour", "hex", "rgb", "hsl", "oklch", "contrast", "wcag"],
   },
   {
+    slug: "http-status-codes",
+    name: "HTTP status codes",
+    description:
+      "Every status code, when to use it and what usually causes it.",
+    category: "Web",
+    icon: Server,
+    keywords: ["http", "status", "error", "404", "500", "502", "rest", "api"],
+  },
+  {
+    slug: "user-agent-parser",
+    name: "User agent parser",
+    description:
+      "Browser, engine, operating system and device from a user agent string.",
+    category: "Web",
+    icon: MonitorSmartphone,
+    keywords: ["user agent", "ua", "browser", "client hints", "device"],
+  },
+  {
     slug: "iban-validator",
     name: "IBAN validator",
     description: "Checks length and check digits and shows the bank code.",
-    category: "Finance",
+    category: "Validation",
     icon: Landmark,
     keywords: ["bank", "account", "blz", "sepa", "check"],
+  },
+  {
+    slug: "bic-validator",
+    name: "BIC / SWIFT validator",
+    description:
+      "Checks the structure of a BIC and shows bank, country and branch.",
+    category: "Validation",
+    icon: Banknote,
+    keywords: ["bic", "swift", "bank", "sepa"],
+  },
+  {
+    slug: "vat-id-validator",
+    name: "VAT ID validator",
+    description: "EU VAT ID formats, with the check digit for German USt-IdNr.",
+    category: "Validation",
+    icon: Receipt,
+    keywords: ["vat", "ust-idnr", "ustid", "tax", "vies", "eu"],
+  },
+  {
+    slug: "ean-validator",
+    name: "EAN / GTIN validator",
+    description:
+      "Check digits for EAN-13, EAN-8, UPC and GTIN-14, plus the GS1 prefix.",
+    category: "Validation",
+    icon: Barcode,
+    keywords: ["ean", "gtin", "upc", "barcode", "isbn", "gs1"],
   },
   {
     slug: "unit-converter",

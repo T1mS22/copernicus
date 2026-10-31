@@ -41,9 +41,17 @@ deliberately has no analytics, because its links carry the decryption key.
 | Time zone converter         | `/timezone-converter`                             | `lib/timezone.ts`                  |
 | Date calculator             | `/date-calculator`                                | `lib/datecalc.ts`                  |
 | IPv4 subnet calculator      | `/subnet-calculator`                              | `lib/subnet.ts`                    |
+| IPv6 subnet calculator      | `/ipv6-subnet-calculator`                         | `lib/ipv6.ts`                      |
+| IP range checker            | `/ip-range-checker`                               | `lib/iprange.ts`                   |
+| MAC address formatter       | `/mac-address-formatter`                          | `lib/mac.ts`                       |
 | chmod calculator            | `/chmod-calculator`                               | `lib/chmod.ts`                     |
 | Color converter             | `/color-converter`                                | `lib/color.ts`                     |
+| HTTP status codes           | `/http-status-codes`                              | `lib/httpstatus.ts`                |
+| User agent parser           | `/user-agent-parser`                              | `lib/useragent.ts`                 |
 | IBAN validator              | `/iban-validator`                                 | `lib/iban.ts`                      |
+| BIC / SWIFT validator       | `/bic-validator`                                  | `lib/validators.ts`                |
+| VAT ID validator            | `/vat-id-validator`                               | `lib/validators.ts`                |
+| EAN / GTIN validator        | `/ean-validator`                                  | `lib/validators.ts`                |
 | Unit converter              | `/unit-converter`                                 | `lib/units.ts`                     |
 | One-time secret sharing     | links to [secret.t-s.dev](https://secret.t-s.dev) | own repo (`lete`)                  |
 
